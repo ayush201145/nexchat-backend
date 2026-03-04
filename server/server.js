@@ -16,33 +16,13 @@ const adminRoutes = require('./routes/admin');
 const app    = express();
 const server = http.createServer(app);
 
-// ─── CORS ─────────────────────────────────────────────────────────────────────
-const allowedOrigins = [
-  process.env.CLIENT_URL,
-  'http://localhost:3000',
-].filter(Boolean);
-
-const corsOptions = {
-  origin: function (origin, callback) {
-    if (!origin) return callback(null, true);
-    if (allowedOrigins.includes(origin)) return callback(null, true);
-    callback(new Error(`CORS blocked: ${origin}`));
-  },
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-};
-
-app.use(cors(corsOptions));
-app.options('*', cors(corsOptions));
+// ─── CORS — allow all origins ─────────────────────────────────────────────────
+app.use(cors());
+app.options('*', cors());
 app.use(express.json());
 
 const io = socketIo(server, {
-  cors: {
-    origin: allowedOrigins,
-    methods: ['GET', 'POST'],
-    credentials: true,
-  },
+  cors: { origin: '*', methods: ['GET', 'POST'] },
 });
 
 // ─── Database ─────────────────────────────────────────────────────────────────
